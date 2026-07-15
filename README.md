@@ -524,6 +524,193 @@ See [GUARDRAILS.md](./GUARDRAILS.md) for detailed security policies.
 
 ---
 
+## 🤖 Future Scope: Agentic AI Era
+
+QueryEngine v1.0 is a **deterministic, production-grade application** with straightforward SQL generation, execution, and testing. The next evolution will introduce **agentic AI patterns** to make the system more intelligent, self-healing, and user-adaptive.
+
+### Current Architecture (v1.0): Deterministic Pipelines
+
+```
+User Query → Phase 1 (SQL Gen) → Phase 2 (Execute) → Phase 3 (Test) → Results
+  (single shot)   (single shot)     (deterministic)   (single shot)
+```
+
+**Strengths:** Fast, predictable, auditable, cost-controlled  
+**Limitation:** No self-refinement or error recovery
+
+### Future Architecture: Agentic Layers (v2.0+)
+
+```
+User Query → Agent 1: SQL Refinement → Agent 2: Test Generation → 
+Agent 3: Debugging → Results (with explanations & optimizations)
+  (multi-turn)      (multi-turn + tools)  (iterative fix)
+```
+
+### Planned Agentic Agents
+
+#### 1. **SQL Generation Agent** (Replaces Phase 1)
+**Today:** One-shot SQL generation  
+**Tomorrow:** Multi-turn refinement with validation
+- Generate initial SQL
+- Validate syntax automatically
+- Check safety constraints
+- Refine if issues found
+- Iterate until perfect (max 3 attempts)
+- Return SQL + confidence score + explanation
+
+**Benefits:**
+- Self-validates before returning
+- Recovers from syntax errors automatically
+- Explains why query matches user intent
+- Handles complex multi-step queries
+
+**Complexity Reduction:** Eliminates manual SQL debugging
+
+---
+
+#### 2. **Test Generation Agent** (Enhances Phase 3)
+**Today:** Generate test code once  
+**Tomorrow:** Intelligent coverage with schema analysis
+- Analyze SQL structure (aggregations, joins, subqueries)
+- Generate diverse test cases automatically
+- Run tests and detect failures
+- Fix failing tests in real-time
+- Ensure >85% coverage
+- Return test suite + coverage report
+
+**Benefits:**
+- Schema-aware test generation (edge cases auto-discovered)
+- Iterative test refinement
+- High confidence in SQL correctness
+- Educates users on test best practices
+
+**Complexity Reduction:** Users don't need to think about test cases
+
+---
+
+#### 3. **Query Debugging Agent** (New: Recovery)
+**Today:** Query fails → Manual fix required  
+**Tomorrow:** Automatic error recovery
+- Detect Phase 2 failures
+- Analyze error message
+- Suggest fixes (missing columns, wrong joins, etc.)
+- Regenerate SQL
+- Test new SQL automatically
+- Report what was fixed
+
+**Benefits:**
+- Self-healing queries
+- Learn from failures
+- Explain mistakes to users
+- Zero manual intervention
+
+**Complexity Reduction:** No more failed queries—agents fix them
+
+---
+
+#### 4. **Schema Learning Agent** (New: Exploration)
+**Today:** Assume user knows schema  
+**Tomorrow:** Discover schema dynamically
+- Connect to any database
+- Scan table structures
+- Analyze relationships (foreign keys, patterns)
+- Build semantic schema map
+- Suggest relevant tables/columns
+- Use learned schema for better SQL generation
+
+**Benefits:**
+- Work with unknown databases instantly
+- Suggest smart queries ("You could join X to Y")
+- Understand domain-specific patterns
+- Reduce user exploration time
+
+**Complexity Reduction:** No need for manual schema documentation
+
+---
+
+#### 5. **Optimization Agent** (New: Performance)
+**Today:** Return results as-is  
+**Tomorrow:** Optimize working queries
+- Analyze query execution plan
+- Identify bottlenecks
+- Suggest optimizations (indexes, rewrite)
+- Show before/after performance comparison
+- Explain trade-offs
+- Educate users on query tuning
+
+**Benefits:**
+- Make queries faster automatically
+- Teach query optimization
+- Show execution plans visually
+- Recommend best practices
+
+**Complexity Reduction:** Users learn optimization while system optimizes
+
+---
+
+### Why Agentic Patterns?
+
+| Capability | v1.0 (Today) | v2.0+ (Agentic) |
+|-----------|-------------|-----------------|
+| **Self-validation** | ❌ User validates | ✅ Agent validates in loop |
+| **Error recovery** | ❌ User fixes | ✅ Agent auto-fixes |
+| **Test coverage** | ❌ Manual cases | ✅ Agent-generated diverse cases |
+| **Schema discovery** | ❌ Assume known | ✅ Agent learns dynamically |
+| **Performance tuning** | ❌ Results only | ✅ Agent optimizes + explains |
+| **User education** | ❌ No explanations | ✅ Agent teaches best practices |
+| **Confidence** | ⚠️ Medium | ✅ High (multi-turn validation) |
+| **Autonomy** | ❌ Manual intervention | ✅ Self-healing |
+
+### Implementation Timeline
+
+**Q3 2026:** SQL Generation Agent + Test Generation Agent  
+**Q4 2026:** Query Debugging Agent  
+**2027 H1:** Schema Learning Agent  
+**2027 H2:** Optimization Agent + Multi-agent orchestration  
+
+### Technology Stack (Agentic Era)
+
+- **Agentic Framework:** Claude SDK with tool calling + multi-turn loops
+- **Tools:** SQL parser, query executor, schema analyzer, test runner
+- **Orchestration:** Agent composition patterns (sequential, parallel, conditional)
+- **Reliability:** Automatic retries, fallbacks, confidence scoring
+- **Cost Control:** Token budgets per agent, caching for repeated analysis
+
+### Developer Experience (Agentic Era)
+
+```typescript
+// v2.0: Agentic query pipeline
+const result = await queryEngine.executeWithAgents({
+  query: "Show revenue by region",
+  database: "postgresql",
+  options: {
+    refineSql: true,        // SQL refinement agent
+    generateTests: true,    // Test generation agent
+    optimizeQuery: true,    // Query optimization agent
+    explainSteps: true      // Educational explanations
+  }
+});
+
+// Returns
+{
+  sql: "...",
+  explanation: "This query groups orders by region...",
+  tests: [...],
+  coverage: 87,
+  performance: { before: "2.3s", after: "0.8s", optimizations: [...] },
+  confidence: 0.98          // Multi-turn validation confidence
+}
+```
+
+### No Breaking Changes
+
+- v1.0 API remains unchanged
+- Agentic features are **opt-in** (`refineSql: true`)
+- Deterministic mode still available for production pipelines
+- Backward compatible with existing integrations
+
+---
+
 ## Support & Feedback
 
 - **Issues:** [GitHub Issues](https://github.com/version-1-com/queryengine/issues)
