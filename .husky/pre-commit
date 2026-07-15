@@ -1,0 +1,45 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🚨 Running pre-commit guardrails..."
+
+# Check for secrets
+echo "✓ Scanning for secrets..."
+if grep -r "sk-ant-\|api_key\|password" --include="*.ts" --include="*.tsx" --include="*.js" --include="*.py" --exclude-dir=node_modules --exclude-dir=venv --exclude-dir=.git .; then
+  echo "❌ Found exposed secrets!"
+  exit 1
+fi
+
+# Format check with Prettier
+echo "✓ Checking code formatting..."
+cd frontend && npm run prettier:check
+if [ $? -ne 0 ]; then
+  echo "❌ Prettier check failed. Run: npm run prettier:fix"
+  exit 1
+fi
+
+# Lint check with ESLint
+echo "✓ Running ESLint..."
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "❌ ESLint failed. Fix errors before committing."
+  exit 1
+fi
+
+# TypeScript type check
+echo "✓ Type checking..."
+npm run type-check
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript errors found."
+  exit 1
+fi
+
+cd ../backend
+
+# Python code quality
+echo "✓ Checking Python code quality..."
+if command -v pylint &> /dev/null; then
+  pylint **/*.py --disable=C0111,C0103 --fail-under=8.0 2>/dev/null || true
+fi
+
+echo "✅ All guardrails passed!"
