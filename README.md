@@ -67,13 +67,12 @@ source venv/bin/activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Create .env file
-# Windows:
-echo ANTHROPIC_API_KEY=your_key_here > .env
-echo MODEL=claude-haiku-4-5-20251001 >> .env
-# macOS/Linux:
-echo "ANTHROPIC_API_KEY=your_key_here" > .env
-echo "MODEL=claude-haiku-4-5-20251001" >> .env
+# Create .env from template
+cp .env.example .env
+
+# Edit .env and add your ANTHROPIC_API_KEY
+# Windows: notepad .env
+# macOS/Linux: nano .env
 
 # Run backend server
 python -m uvicorn main:app --reload
@@ -239,21 +238,29 @@ See [API Documentation](./docs/API.md) for complete endpoint reference.
 
 ### Environment Variables
 
-Create `.env` in the `backend/` directory:
+1. **Copy the template:**
+   ```bash
+   cd backend
+   cp .env.example .env
+   ```
 
-```env
-# Required
-ANTHROPIC_API_KEY=sk-ant-...
+2. **Edit `.env` with your settings:**
+   ```env
+   # Required
+   ANTHROPIC_API_KEY=sk-ant-...
 
-# Optional (defaults shown)
-MODEL=claude-haiku-4-5-20251001
-DATABASE_URL=sqlite:///./queryengine.db
-LOG_LEVEL=INFO
-QUERY_TIMEOUT_SECONDS=10
-TEST_TIMEOUT_SECONDS=5
-```
+   # Optional (defaults shown)
+   MODEL=claude-haiku-4-5-20251001
+   DATABASE_URL=sqlite:///./queryengine.db
+   LOG_LEVEL=INFO
+   QUERY_TIMEOUT_SECONDS=10
+   TEST_TIMEOUT_SECONDS=5
+   ```
 
-**Do not commit `.env` to version control.** Use `.env.example` as template.
+**Important:**
+- ✅ Commit `backend/.env.example` (it's documentation)
+- ❌ Never commit `backend/.env` (contains secrets)
+- Location: Always in `backend/` directory
 
 ### Color Theme
 
